@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 require('dotenv').config();
-const { MongoClient, ServerApiVersion ,ObjectId} = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const port = process.env.PORT || 5000;
 
 
@@ -36,21 +36,21 @@ async function run() {
         })
 
         app.get('/toy', async (req, res) => {
-            console.log(req.query.email,'query');
+            // console.log(req.query.email,'query');
             let query = {};
             if (req.query?.email) {
-              query = { email: req.query.email }
+                query = { email: req.query.email }
             }
             const result = await toyCarCollction.find(query).toArray();
             res.send(result)
-          })
+        })
 
         app.get('/addToy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await toyCarCollction.findOne(query);
             res.send(result);
-          })
+        })
 
 
         app.post('/addToys', async (req, res) => {
@@ -58,6 +58,24 @@ async function run() {
             // console.log(checkOut);
             const result = await toyCarCollction.insertOne(checkOut);
             res.send(result);
+        })
+
+        app.patch('/update/:id', async (req, res) => {
+            const id = req.params.id;
+            const toy = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const newToy = {
+                $set: {
+                    price: toy.price,
+                    quentity: toy.quentity,
+                    details: toy.details
+                }
+            }
+
+            const result = await toyCarCollction.updateOne(filter, newToy, options)
+            res.send(result)
+
         })
 
 
