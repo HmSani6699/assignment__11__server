@@ -7,7 +7,13 @@ const port = process.env.PORT || 5000;
 
 
 // MiddleWare
-app.use(cors());
+const corsConfig = {
+    origin: '*',
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
+}
+app.use(cors(corsConfig))
+
 app.use(express.json());
 
 
@@ -78,7 +84,7 @@ async function run() {
             res.send(result)
 
         })
-        
+
         // Delete
         app.delete('/addToy/:id', async (req, res) => {
             const id = req.params.id;
@@ -89,7 +95,7 @@ async function run() {
 
 
         // Send a ping to confirm a successful connection
-        
+
         // await client.db("admin").command({ ping: 1 });
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
