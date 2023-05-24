@@ -32,16 +32,32 @@ const client = new MongoClient(uri, {
 async function run() {
     try {
         // Connect the client to the server	(optional starting in v4.7)
-
         // await client.connect();
 
+        const tabToyCarCollction = client.db('toyCarDB').collection('tabToy');
         const toyCarCollction = client.db("toyCarDB").collection('toyCar');
 
+        //-------------------//
+        // Get all toy//
+        //-------------------//
+        app.get('/tabToy', async (req, res) => {
+            const result = await tabToyCarCollction.find().toArray();
+            res.send(result)
+        });
+
+
+        //-------------------//
+        // Get all toy//
+        //-------------------//
         app.get('/addToy', async (req, res) => {
             const result = await toyCarCollction.find().toArray();
             res.send(result)
-        })
+        });
 
+
+        //---------------//
+        // Email user //
+        //-------------------//
         app.get('/toy', async (req, res) => {
             // console.log(req.query.email,'query');
             let query = {};
@@ -50,16 +66,23 @@ async function run() {
             }
             const result = await toyCarCollction.find(query).toArray();
             res.send(result)
-        })
+        });
 
+
+        //-------------------//
+        // Single Toy //
+        //-------------------//
         app.get('/addToy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
             const result = await toyCarCollction.findOne(query);
             res.send(result);
-        })
+        });
 
 
+        //------------//
+        // Post new Toy //
+        //-------------------//
         app.post('/addToys', async (req, res) => {
             const checkOut = req.body;
             // console.log(checkOut);
@@ -67,6 +90,10 @@ async function run() {
             res.send(result);
         })
 
+
+        // ----------------//
+        // Update Toy //
+        //-------------------//
         app.patch('/update/:id', async (req, res) => {
             const id = req.params.id;
             const toy = req.body;
@@ -83,9 +110,31 @@ async function run() {
             const result = await toyCarCollction.updateOne(filter, newToy, options)
             res.send(result)
 
-        })
+        });
 
-        // Delete
+
+        app.get("/allToy/:text", async (req, res) => {
+
+            if (
+                req.params.text === "Programmable" ||
+                req.params.text === "RemoteControl" ||
+                req.params.text === "TransformingRobots"
+            ) {
+                const result = await toyCarCollction.find({ status: req.params.text }).toArray();
+                const limit = req.query.limit || 3;
+                const limitedToyData = result.slice(0, limit);
+                return res.json(limitedToyData);
+            }
+            const result = await toyCarCollction.find({}).toArray();
+            const limit = req.query.limit || 3;
+            const limitedToyData = result.slice(0, limit);
+            res.json(limitedToyData);
+        });
+
+
+        //-------------------//
+        // Delete Toy //
+
         app.delete('/addToy/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) };
