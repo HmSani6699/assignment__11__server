@@ -38,6 +38,26 @@ async function run() {
         const toyCarCollction = client.db("toyCarDB").collection('toyCar');
 
         //-------------------//
+        // Indexing //
+        //-------------------//
+        const indexKeys = { name: 1 };
+        const indexOptions = { name: "name" };
+        const result = await toyCarCollction.createIndex(indexKeys, indexOptions);
+
+        app.get("/getToyText/:text", async (req, res) => {
+            const text = req.params.text;
+            console.log(text);
+            const result = await toyCarCollction.find({
+                    $or: [
+                        { name: { $regex: text, $options: "i" } }
+                    ],
+                }).toArray();
+            res.send(result);
+        });
+
+
+
+        //-------------------//
         // Get all toy//
         //-------------------//
         app.get('/tabToy', async (req, res) => {
@@ -65,7 +85,7 @@ async function run() {
                 query = { email: req.query.email }
             }
 
-            const result = await toyCarCollction.find(query).sort({price:`${req.query.price}`}) .toArray();
+            const result = await toyCarCollction.find(query).sort({ price: `${req.query.price}` }).toArray();
             res.send(result)
         });
 
