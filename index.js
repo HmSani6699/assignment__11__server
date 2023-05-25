@@ -59,12 +59,13 @@ async function run() {
         // Email user //
         //-------------------//
         app.get('/toy', async (req, res) => {
-            // console.log(req.query.email,'query');
+            // console.log(req.query.price);
             let query = {};
             if (req.query?.email) {
                 query = { email: req.query.email }
             }
-            const result = await toyCarCollction.find(query).toArray();
+
+            const result = await toyCarCollction.find(query).sort({price:`${req.query.price}`}) .toArray();
             res.send(result)
         });
 
@@ -94,9 +95,10 @@ async function run() {
         // ----------------//
         // Update Toy //
         //-------------------//
-        app.patch('/update/:id', async (req, res) => {
+        app.put('/addToy/:id', async (req, res) => {
             const id = req.params.id;
             const toy = req.body;
+            console.log(toy);
             const filter = { _id: new ObjectId(id) };
             const options = { upsert: true };
             const newToy = {
