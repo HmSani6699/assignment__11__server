@@ -42,7 +42,7 @@ async function run() {
         //-------------------//
         const indexKeys = { name: 1 };
         const indexOptions = { name: "name" };
-        const result = await toyCarCollction.createIndex(indexKeys, indexOptions);
+        const result =  toyCarCollction.createIndex(indexKeys, indexOptions);
 
         app.get("/getToyText/:text", async (req, res) => {
             const text = req.params.text;
@@ -167,7 +167,7 @@ async function run() {
 
         // Send a ping to confirm a successful connection
 
-        await client.db("admin").command({ ping: 1 });
+         client.db("admin").command({ ping: 1 });
 
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
